@@ -1,0 +1,89 @@
+parameter_group,parameter,option_label,value,unit,data_type,description
+metadata,data_type,,synthetic engineering test data,,text,Data type.
+metadata,seed,,20260917,,integer,Full-year generation seed.
+metadata,start_date,,2026-09-07,,text,Start date.
+metadata,days,,365,count,integer,Days.
+metadata,sku_count,,2000,count,integer,Sku count.
+metadata.temperature_zone_counts,sku_count,Ambient,1360,count,integer,Sku count.
+metadata.temperature_zone_counts,sku_count,Chilled,440,count,integer,Sku count.
+metadata.temperature_zone_counts,sku_count,Frozen,200,count,integer,Sku count.
+metadata.notes,note,note_1,Product identifiers run from P0001 through P2000.,,text,Note.
+metadata.notes,note,note_2,The realized order and SKU demand history is synthetic and is not an empirical forecast.,,text,Note.
+metadata.notes,note,note_3,Order basket totals reconcile exactly with the order-line quantities.,,text,Note.
+metadata.notes,note,note_4,The history covers 365 consecutive days and preserves the original first 56 days.,,text,Note.
+metadata.notes,note,note_5,The remaining days preserve weekday and basket patterns while adding annual seasonality trend and daily variation.,,text,Note.
+metadata.notes,note,note_6,Three supplier replenishment scenarios are applied to the same demand stream.,,text,Note.
+metadata.notes,note,note_7,Storage and staging modules are reference options; students may propose documented alternatives.,,text,Note.
+metadata.notes,note,note_8,Students should test all engineering assumptions through sensitivity analysis.,,text,Note.
+facility_shell,receiving_and_handoff_configuration,,student decision: shared or adjacent access,,text,Receiving and handoff configuration.
+facility_shell,candidate_pick_aisle_width_ft,option_1,4.0,feet,decimal,Candidate pick aisle width ft.
+facility_shell,candidate_pick_aisle_width_ft,option_2,5.0,feet,decimal,Candidate pick aisle width ft.
+facility_shell,candidate_pick_aisle_width_ft,option_3,6.0,feet,decimal,Candidate pick aisle width ft.
+facility_shell,candidate_cross_aisle_width_ft,option_1,6.0,feet,decimal,Candidate cross aisle width ft.
+facility_shell,candidate_cross_aisle_width_ft,option_2,8.0,feet,decimal,Candidate cross aisle width ft.
+order_control_assumptions,order_queue_refresh_seconds,,2.0,seconds,decimal,Order queue refresh seconds.
+order_control_assumptions,task_acceptance_seconds_triangular,minimum,2.0,seconds,decimal,Task acceptance seconds triangular distribution.
+order_control_assumptions,task_acceptance_seconds_triangular,mode,5.0,seconds,decimal,Task acceptance seconds triangular distribution.
+order_control_assumptions,task_acceptance_seconds_triangular,maximum,12.0,seconds,decimal,Task acceptance seconds triangular distribution.
+order_control_assumptions,candidate_visible_order_count,option_1,10,count,integer,Candidate visible order count.
+order_control_assumptions,candidate_visible_order_count,option_2,20,count,integer,Candidate visible order count.
+order_control_assumptions,candidate_visible_order_count,option_3,40,count,integer,Candidate visible order count.
+order_control_assumptions,required_display_fields,option_1,order_reference,,text,Required display fields.
+order_control_assumptions,required_display_fields,option_2,placement_time,,text,Required display fields.
+order_control_assumptions,required_display_fields,option_3,basket_contents,,text,Required display fields.
+order_control_assumptions,required_display_fields,option_4,temperature_zones,,text,Required display fields.
+order_control_assumptions,required_display_fields,option_5,latest_staged_time,,text,Required display fields.
+work_content_assumptions,picker_walk_speed_m_per_s_unloaded,,1.25,m/s,decimal,Picker walk speed m per s unloaded.
+work_content_assumptions,picker_walk_speed_m_per_s_loaded,,1.0,m/s,decimal,Picker walk speed m per s loaded.
+work_content_assumptions,pick_seconds_per_unit_triangular,minimum,4,seconds/unit,integer,Pick seconds per unit triangular distribution.
+work_content_assumptions,pick_seconds_per_unit_triangular,mode,8,seconds/unit,integer,Pick seconds per unit triangular distribution.
+work_content_assumptions,pick_seconds_per_unit_triangular,maximum,15,seconds/unit,integer,Pick seconds per unit triangular distribution.
+work_content_assumptions,manual_search_seconds_per_line_triangular,minimum,3,seconds/order line,integer,Manual search seconds per line triangular distribution.
+work_content_assumptions,manual_search_seconds_per_line_triangular,mode,8,seconds/order line,integer,Manual search seconds per line triangular distribution.
+work_content_assumptions,manual_search_seconds_per_line_triangular,maximum,20,seconds/order line,integer,Manual search seconds per line triangular distribution.
+work_content_assumptions,directed_search_seconds_per_line_triangular,minimum,0.5,seconds/order line,decimal,Directed search seconds per line triangular distribution.
+work_content_assumptions,directed_search_seconds_per_line_triangular,mode,2,seconds/order line,integer,Directed search seconds per line triangular distribution.
+work_content_assumptions,directed_search_seconds_per_line_triangular,maximum,5,seconds/order line,integer,Directed search seconds per line triangular distribution.
+work_content_assumptions,scan_seconds_per_line,,2.0,seconds/order line,decimal,Scan seconds per line.
+work_content_assumptions,tote_change_seconds,,20.0,seconds,decimal,Tote change seconds.
+work_content_assumptions,consolidation_seconds_per_order,,25.0,seconds/order,decimal,Consolidation seconds per order.
+work_content_assumptions,additional_seconds_per_temperature_zone,,6.0,seconds/temperature zone,decimal,Additional seconds per temperature zone.
+work_content_assumptions,quality_check_seconds_per_order,,15.0,seconds/order,decimal,Quality check seconds per order.
+work_content_assumptions,stage_seconds_per_tote,,9.0,seconds/tote,decimal,Stage seconds per tote.
+work_content_assumptions,staging_position_assignment_seconds,,3.0,seconds,decimal,Staging position assignment seconds.
+work_content_assumptions,rider_scan_and_retrieval_seconds_triangular,minimum,8.0,seconds,decimal,Rider scan and retrieval seconds triangular distribution.
+work_content_assumptions,rider_scan_and_retrieval_seconds_triangular,mode,18.0,seconds,decimal,Rider scan and retrieval seconds triangular distribution.
+work_content_assumptions,rider_scan_and_retrieval_seconds_triangular,maximum,45.0,seconds,decimal,Rider scan and retrieval seconds triangular distribution.
+work_content_assumptions,replenishment_case_handling_seconds,,35.0,seconds,decimal,Replenishment case handling seconds.
+economic_assumptions,fully_loaded_picker_usd_hour,,22.0,USD/hour,decimal,Fully loaded picker usd hour.
+economic_assumptions,fully_loaded_replenisher_usd_hour,,21.0,USD/hour,decimal,Fully loaded replenisher usd hour.
+economic_assumptions,supervisor_usd_hour,,34.0,USD/hour,decimal,Supervisor usd hour.
+economic_assumptions,electricity_usd_kwh,,0.15,USD/kWh,decimal,Electricity usd kwh.
+economic_assumptions,handheld_device_capex_usd_each,,850.0,USD/device,decimal,Handheld device capex usd each.
+economic_assumptions,staging_scanner_capex_usd_each,,650.0,USD/device,decimal,Staging scanner capex usd each.
+economic_assumptions,routing_software_fixed_usd_month,,4500.0,USD/month,decimal,Routing software fixed usd month.
+economic_assumptions,routing_software_usd_user_month,,65.0,USD/user-month,decimal,Routing software usd user month.
+economic_assumptions,late_to_stage_penalty_usd_order,,8.0,USD/order,decimal,Late to stage penalty usd order.
+economic_assumptions,pick_error_penalty_usd_order,,12.0,USD/order,decimal,Pick error penalty usd order.
+economic_assumptions,annual_capital_charge_rate,,0.2,fraction,decimal,Annual capital charge rate.
+service_and_safety_requirements,primary_service_metric,,share of orders staged by latest_staged_time,,text,Primary service metric.
+service_and_safety_requirements,minimum_on_time_stage_share,,0.95,fraction,decimal,Minimum on time stage share.
+service_and_safety_requirements,stretch_on_time_stage_share,,0.99,fraction,decimal,Stretch on time stage share.
+service_and_safety_requirements,target_pick_accuracy,,0.998,fraction,decimal,Target pick accuracy.
+service_and_safety_requirements,maximum_planned_picker_utilization,,0.85,fraction,decimal,Maximum planned picker utilization.
+service_and_safety_requirements,temperature_separation_required,,true,boolean,boolean,Temperature separation required.
+service_and_safety_requirements,rider_order_scan_match_required,,true,boolean,boolean,Rider order scan match required.
+service_and_safety_requirements,food_safety_and_local_code_review_required,,true,boolean,boolean,Food safety and local code review required.
+service_promise,candidate_promise_minutes,option_1,20,minutes,integer,"Order-to-delivery promise, swept."
+service_promise,candidate_promise_minutes,option_2,30,minutes,integer,"Order-to-delivery promise, swept."
+service_promise,candidate_promise_minutes,option_3,45,minutes,integer,"Order-to-delivery promise, swept."
+service_targets,candidate_service_target,option_1,0.50,fraction,decimal,Demand service target (mean).
+service_targets,candidate_service_target,option_2,0.90,fraction,decimal,Demand service target.
+service_targets,candidate_service_target,option_3,0.99,fraction,decimal,Demand service target.
+operating_calendar,order_day_start_minute,,600,minute of day,integer,Customer order day begins at 10:00.
+operating_calendar,order_day_end_minute,,1080,minute of day,integer,Customer order day ends at 18:00.
+capacity_planning,planning_interval_minutes,,60,minutes,integer,Base interval for peak throughput capacity planning.
+capacity_planning,baseline_picker_availability_fraction,,1.0,fraction,decimal,Baseline fraction of scheduled picker time available.
+capacity_planning,baseline_picker_reliability,,0.95,fraction,decimal,Baseline picker reliability factor for the course capacity relationship.
+capacity_planning,baseline_picker_efficiency,,0.85,fraction,decimal,Baseline picker efficiency factor for the course capacity relationship.
+economic_assumptions,facility_space_usd_sqft_month,,2.5,USD/sqft-month,decimal,Synthetic monthly occupancy cost used to compare facility footprints.

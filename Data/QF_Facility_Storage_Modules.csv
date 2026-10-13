@@ -1,0 +1,9 @@
+module_id,module_category,zone,width_ft,depth_ft,height_ft,usable_levels,positions_per_level,total_positions,position_width_ft,position_depth_ft,position_height_ft,usable_cube_factor,usable_position_volume_l,capex_usd,energy_kwh_day
+AMB-SHELF,Storage,Ambient,4.0,2.0,7.0,5,4,20,1.0,2.0,1.4,0.82,65.0,420,0.0
+CHL-CAB,Storage,Chilled,4.0,2.5,7.0,5,4,20,1.0,2.5,1.4,0.74,73.3,7600,9.0
+FRZ-CAB,Storage,Frozen,4.0,3.0,7.0,5,4,20,1.0,3.0,1.4,0.70,83.3,9800,13.0
+PACK-BENCH,Consolidation,All,8.0,3.0,3.0,1,0,0,,,,,,1900,0.8
+ORDER-CONTROL,Order Control,All,5.0,2.5,4.0,0,0,0,,,,,,2800,1.2
+STAGE-AMB-RACK,Staging,Ambient,4.0,2.0,7.0,4,3,12,1.333,2.0,1.75,,,650,0.0
+STAGE-CHL-CAB,Staging,Chilled,4.0,2.5,7.0,4,3,12,1.333,2.5,1.75,,,8200,9.5
+STAGE-FRZ-CAB,Staging,Frozen,4.0,3.0,7.0,4,3,12,1.333,3.0,1.75,,,10400,13.5

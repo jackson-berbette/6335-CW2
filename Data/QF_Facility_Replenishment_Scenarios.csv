@@ -1,0 +1,10 @@
+scenario_id,scenario_name,supplier,frequency_label,nominal_interval_days,scheduled_days,interval_pattern_days,receipt_time,planning_note
+FAST,Fast Replenishment,Local,Daily,1.0,Every day,1,06:00,
+FAST,Fast Replenishment,Regional,Twice weekly,3.5,Sunday and Thursday,4 then 3,06:00,3.5 is the analytical average. Simulation uses the named calendar days.
+FAST,Fast Replenishment,National,Weekly,7.0,Every 7 days from horizon start,7,06:00,
+MEDIUM,Medium Replenishment,Local,Twice weekly,3.5,Sunday and Thursday,4 then 3,06:00,3.5 is the analytical average. Simulation uses the named calendar days.
+MEDIUM,Medium Replenishment,Regional,Weekly,7.0,Every 7 days from horizon start,7,06:00,
+MEDIUM,Medium Replenishment,National,Every two weeks,14.0,Every 14 days from horizon start,14,06:00,
+SLOW,Slow Replenishment,Local,Weekly,7.0,Every 7 days from horizon start,7,06:00,
+SLOW,Slow Replenishment,Regional,Every two weeks,14.0,Every 14 days from horizon start,14,06:00,
+SLOW,Slow Replenishment,National,Monthly,28.0,Every 28 days from horizon start,28,06:00,

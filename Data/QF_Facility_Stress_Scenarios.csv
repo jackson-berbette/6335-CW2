@@ -1,0 +1,7 @@
+scenario_id,order_volume_multiplier,affected_sku_share,affected_sku_demand_multiplier,affected_sku_seed,picker_availability,inbound_delay_minutes
+BASE,1.0,0.0,1.0,20260917,1.0,0
+PEAK_VOLUME,1.35,0.0,1.0,20260917,1.0,0
+HOT_SKU_SHIFT,1.0,0.05,2.0,20260917,1.0,0
+LABOR_SHORT,1.0,0.0,1.0,20260917,0.8,0
+REPLENISHMENT_DELAY,1.0,0.0,1.0,20260917,1.0,120
+COMBINED_STRESS,1.25,0.05,1.75,20260917,0.85,90
