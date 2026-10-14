@@ -1,10 +1,10 @@
-scenario_id,scenario_name,supplier,frequency_label,nominal_interval_days,scheduled_days,interval_pattern_days,receipt_time,planning_note
-FAST,Fast Replenishment,Local,Daily,1.0,Every day,1,06:00,
-FAST,Fast Replenishment,Regional,Twice weekly,3.5,Sunday and Thursday,4 then 3,06:00,3.5 is the analytical average. Simulation uses the named calendar days.
-FAST,Fast Replenishment,National,Weekly,7.0,Every 7 days from horizon start,7,06:00,
-MEDIUM,Medium Replenishment,Local,Twice weekly,3.5,Sunday and Thursday,4 then 3,06:00,3.5 is the analytical average. Simulation uses the named calendar days.
-MEDIUM,Medium Replenishment,Regional,Weekly,7.0,Every 7 days from horizon start,7,06:00,
-MEDIUM,Medium Replenishment,National,Every two weeks,14.0,Every 14 days from horizon start,14,06:00,
-SLOW,Slow Replenishment,Local,Weekly,7.0,Every 7 days from horizon start,7,06:00,
-SLOW,Slow Replenishment,Regional,Every two weeks,14.0,Every 14 days from horizon start,14,06:00,
-SLOW,Slow Replenishment,National,Monthly,28.0,Every 28 days from horizon start,28,06:00,
+scenario_id,scenario_name,supplier,served_by_dc,frequency_label,nominal_interval_days,scheduled_days,interval_pattern_days,cycle_anchor_date,book_day_offset,book_time,available_from,planning_note
+FAST,Fast Replenishment,Local,Local,Daily,1.0,Every day,1,,1,18:00,06:00,Book by 18:00 on day d-1; the goods are received overnight and are on the shelves at 06:00 on day d.
+FAST,Fast Replenishment,Regional,Regional,Twice weekly,3.5,Sunday and Thursday,4 then 3,,2,18:00,06:00,3.5 days is the analytical average; the simulation uses the two named weekdays.
+FAST,Fast Replenishment,National,National,Weekly,7.0,Every Monday,7,2026-09-07,4,18:00,06:00,Deliveries fall on the same weekday in the historical year and in the evaluation period.
+MEDIUM,Medium Replenishment,Local,Local,Twice weekly,3.5,Sunday and Thursday,4 then 3,,2,08:00,06:00,3.5 days is the analytical average; the simulation uses the two named weekdays.
+MEDIUM,Medium Replenishment,Regional,Regional,Weekly,7.0,Every Monday,7,2026-09-07,5,08:00,06:00,
+MEDIUM,Medium Replenishment,National,National,Every two weeks,14.0,Every other Monday from 2026-09-07,14,2026-09-07,7,08:00,06:00,
+SLOW,Slow Replenishment,Local,Regional,Every two weeks,14.0,Every other Monday from 2026-09-07,14,2026-09-07,7,08:00,06:00,The Slow scenario has no Local DC: products assigned to the Local DC are supplied by the Regional DC on the Regional calendar and booking deadline.
+SLOW,Slow Replenishment,Regional,Regional,Every two weeks,14.0,Every other Monday from 2026-09-07,14,2026-09-07,7,08:00,06:00,
+SLOW,Slow Replenishment,National,National,Every four weeks,28.0,Every fourth Monday from 2026-09-07,28,2026-09-07,7,08:00,06:00,The casework table says once a month; the simulation uses a 28-day cycle so deliveries keep the same weekday.

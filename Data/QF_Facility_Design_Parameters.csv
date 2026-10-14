@@ -1,6 +1,6 @@
 parameter_group,parameter,option_label,value,unit,data_type,description
 metadata,data_type,,synthetic engineering test data,,text,Data type.
-metadata,seed,,20260917,,integer,Full-year generation seed.
+metadata,seed,,20260917; rescale 20261003,,text,"Generation seeds: the base year, then this release's rescale."
 metadata,start_date,,2026-09-07,,text,Start date.
 metadata,days,,365,count,integer,Days.
 metadata,sku_count,,2000,count,integer,Sku count.
@@ -10,8 +10,8 @@ metadata.temperature_zone_counts,sku_count,Frozen,200,count,integer,Sku count.
 metadata.notes,note,note_1,Product identifiers run from P0001 through P2000.,,text,Note.
 metadata.notes,note,note_2,The realized order and SKU demand history is synthetic and is not an empirical forecast.,,text,Note.
 metadata.notes,note,note_3,Order basket totals reconcile exactly with the order-line quantities.,,text,Note.
-metadata.notes,note,note_4,The history covers 365 consecutive days and preserves the original first 56 days.,,text,Note.
-metadata.notes,note,note_5,The remaining days preserve weekday and basket patterns while adding annual seasonality trend and daily variation.,,text,Note.
+metadata.notes,note,note_4,"The history covers 365 consecutive days, 2026-09-07 through 2027-09-06.",,text,Note.
+metadata.notes,note,note_5,"Daily volumes carry weekday effects, an annual seasonality trend and day-to-day variation.",,text,Note.
 metadata.notes,note,note_6,Three supplier replenishment scenarios are applied to the same demand stream.,,text,Note.
 metadata.notes,note,note_7,Storage and staging modules are reference options; students may propose documented alternatives.,,text,Note.
 metadata.notes,note,note_8,Students should test all engineering assumptions through sensitivity analysis.,,text,Note.
@@ -77,7 +77,7 @@ service_and_safety_requirements,food_safety_and_local_code_review_required,,true
 service_promise,candidate_promise_minutes,option_1,20,minutes,integer,"Order-to-delivery promise, swept."
 service_promise,candidate_promise_minutes,option_2,30,minutes,integer,"Order-to-delivery promise, swept."
 service_promise,candidate_promise_minutes,option_3,45,minutes,integer,"Order-to-delivery promise, swept."
-service_targets,candidate_service_target,option_1,0.50,fraction,decimal,Demand service target (mean).
+service_targets,candidate_service_target,option_1,0.50,fraction,decimal,Demand service target (median).
 service_targets,candidate_service_target,option_2,0.90,fraction,decimal,Demand service target.
 service_targets,candidate_service_target,option_3,0.99,fraction,decimal,Demand service target.
 operating_calendar,order_day_start_minute,,600,minute of day,integer,Customer order day begins at 10:00.
@@ -87,3 +87,5 @@ capacity_planning,baseline_picker_availability_fraction,,1.0,fraction,decimal,Ba
 capacity_planning,baseline_picker_reliability,,0.95,fraction,decimal,Baseline picker reliability factor for the course capacity relationship.
 capacity_planning,baseline_picker_efficiency,,0.85,fraction,decimal,Baseline picker efficiency factor for the course capacity relationship.
 economic_assumptions,facility_space_usd_sqft_month,,2.5,USD/sqft-month,decimal,Synthetic monthly occupancy cost used to compare facility footprints.
+supply,full_fill_probability,,0.95,fraction,decimal,"Probability that a DC supplies the complete quantity presented to it; common to Local, Regional and National."
+supply,partial_fill_fraction,,0.90,fraction,decimal,Fraction of the presented quantity a DC supplies when it does not supply it all; the rest is presented to the next DC in the product's sequence.
