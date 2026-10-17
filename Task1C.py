@@ -51,7 +51,6 @@ for col in["lines", "units"]:
         "variance_to_mean" : x.var() / x.mean(),
         "median" : x.median(),
         "p90" : x.quantile(0.90),
-        "p95" : x.quantile(0.95),
         "p99" : x.quantile(0.99),
         "max" : x.max()    
      }
