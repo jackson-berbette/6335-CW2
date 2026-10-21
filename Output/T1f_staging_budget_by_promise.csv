@@ -1,0 +1,4 @@
+promise_minutes,budget_mean,budget_std,budget_min,budget_p05,budget_p50,budget_p95,budget_max,covers_Fast,covers_Medium,covers_Slow
+20,8.675,2.5837,5.0,5.3,8.2,13.5,15.9,1.0,0.6808,0.304
+30,18.675,2.5837,15.0,15.3,18.2,23.5,25.9,1.0,1.0,1.0
+45,33.675,2.5837,30.0,30.3,33.2,38.5,40.9,1.0,1.0,1.0

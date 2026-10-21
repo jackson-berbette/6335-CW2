@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,6 +8,8 @@ import matplotlib.pyplot as plt
 # read relevant input files
 orders_df = pd.read_csv("Data/QF_Facility_Orders.csv")
 design_params_df = pd.read_csv("Data/QF_Facility_Design_Parameters.csv")
+
+os.makedirs("Output", exist_ok=True)
 
 day_names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
@@ -28,6 +31,11 @@ service_levels = {
     "stretch": get_parameter("stretch_on_time_stage_share"),
 }
 
+# candidate delivery promises tested on the platform (20, 30, 45 minutes)
+promises = (
+    design_params_df.loc[design_params_df["parameter"] == "candidate_promise_minutes", "value"]
+    .astype(int).tolist()
+)
 
 # -------- Part f --------
 # OTD = OTS + RTA + PTD
@@ -76,19 +84,32 @@ for scenario, ots_range in ots_scenarios.items():
             .rename("ots_rta_quantile").reset_index()
         )
 
+        # courier wait reserved in the promise: same quantites of RTA in the period
+        period_rta = (
+            orders_df.groupby(["week", "day_of_week", "hour"])["rta"]
+            .quantile(level)
+            .rename("rta_reserve").reset_index()
+        )
+
         df = orders_df[["order_id", "week", "day_of_week", "hour", "ptd", "rta"]].merge(
             period_quantile, on=["week", "day_of_week", "hour"], how="left"
+        ).merge(
+            period_rta, on=["week", "day_of_week", "hour"], how="left"
         )
 
         # OTD promise quoted to the customer, in whole minutes
         df["otd_promise"] = np.ceil(df["ots_rta_quantile"] + df["ptd"])
 
-        # OTS promise: time the QF has to stage the order and still meet OTD
-        df["ots_promise"] = df["otd_promise"] - df["ptd"] - df["rta"]
+        # OTS promise: time the QF has to stage the order, after reserving the
+        # courier wait the promise protects against
+        # the order's own courier wait is not known yet
+        df["ots_promise"] = df["otd_promise"] - df["ptd"] - df["rta_reserve"]
 
-        # check: draw an OTS inside the scenario range, is the order on time?
+        # check: draw an OTS inside the scenario range, is the order delivered
+        # withing its quoted OTD promise once its actual courier wait i added?
         df["ots_draw"] = rng.uniform(ots_range[0], ots_range[1], len(df))
-        df["on_time"] = df["ots_draw"] <= df["ots_promise"]
+        df["delivered_on_time"] = (df["ots_draw"] + df["rta"] + df["ptd"]) <= df["otd_promise"]
+
 
         df["scenario"] = scenario
         df["service_level"] = level_name
@@ -116,7 +137,7 @@ def summarise(group):
         "share_below_range": (ots < lo).mean(),
         "share_in_range": ots.between(lo, hi).mean(),
         "share_above_range": (ots > hi).mean(),
-        "on_time_share": group["on_time"].mean(),
+        "delivered_on_time_share": group["delivered_on_time"].mean(),
     })
 
 
@@ -154,14 +175,45 @@ ots_by_hour = (
 print(ots_by_weekday.round(2))
 print(ots_by_hour.round(2))
 
+# staging budget under the casework's tested promises:
+#latest staged-ready time = placement + promise - estimated delivery time,
+# so the QF has promise - estimated delivery minutes to stage each other
+budget_results = []
+
+for promise in promises:
+
+    budget = promise - orders_df["ptd"]
+
+    row = {
+        "promise_minutes": promise,
+        "budget_mean" : budget.mean(),
+        "budget_std": budget.std(),
+        "budget_min": budget.min(),
+        "budget_p05": budget.quantile(0.05),
+        "budget_p50": budget.quantile(0.50),
+        "budget_p95": budget.quantile(0.95),
+        "budget_max": budget.max()
+    }
+
+    # share of orders whose budget covers the upper end of each OTS scenario
+    for scenario, (lo, hi) in ots_scenarios.items():
+        row["covers_" + scenario] = (budget >= hi).mean()
+
+    budget_results.append(row)
+
+staging_budget_df = pd.DataFrame(budget_results)
+
+print(staging_budget_df.round(3).to_string(index=False))
+
 ots_summary.round(4).to_csv("Output/T1f_ots_promise_summary.csv")
 ots_quantiles.round(4).to_csv("Output/T1f_ots_promise_quantiles.csv")
+staging_budget_df.round(4).to_csv("Output/T1f_staging_budget_by_promise.csv", index=False)
 
 
 # -------- Plots --------
 fig, axes = plt.subplots(1, 2, figsize=(13, 4.5))
 
-bins = np.arange(0, 20.5, 0.25)
+bins = np.arange(0, 12.5, 0.25)
 
 for scenario, (lo, hi) in ots_scenarios.items():
     values = base_df.loc[base_df["scenario"] == scenario, "ots_promise"]
@@ -186,17 +238,24 @@ plt.tight_layout()
 plt.show()
 
 # cumulative distribution of the OTS promise, all scenarios together
-fig, ax = plt.subplots(figsize=(8, 4.8))
+fig, ax = plt.subplots(figsize=(9, 4.8))
 
-for scenario in ots_scenarios:
-    values = np.sort(base_df.loc[base_df["scenario"] == scenario, "ots_promise"].values)
-    ax.plot(values, np.arange(1, len(values) + 1) / len(values), label=scenario)
+budget_bins = np.arange(0, 42, 0.5)
 
-ax.set_xlabel("OTS promise (minutes)")
-ax.set_ylabel("Share of orders with OTS promise <= x")
-ax.set_title("OTS promise CDF (minimum service level)")
+for promise in promises:
+    ax.hist(promise - orders_df["ptd"], bins=budget_bins, alpha=0.6, label=f"{promise}-min promise")
+
+label_heights = [0.95, 0.88, 0.95]
+
+for (scenario, (lo, hi)), height in zip(ots_scenarios.items(), label_heights):
+    ax.axvspan(lo, hi, color="grey", alpha=0.15)
+    ax.text((lo + hi) / 2, ax.get_ylim()[1] * height, scenario, ha="center", fontsize=8)
+
+ax.set_xlabel("Staging budget = promise - estimated delivery time (minutes)")
+ax.set_ylabel("Orders")
+ax.set_title("Staging budget per order under the tested promises")
 ax.legend()
 
 plt.tight_layout()
-plt.savefig("Output/T1f_fig_ots_promise_cdf.png", dpi=150)
+plt.savefig("Output/T1f_fig_staging_budget.png", dpi=150)
 plt.show()
