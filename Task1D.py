@@ -51,6 +51,7 @@ for (a,b), num_ab in pair_counts.items():
     # Lift = 1 --> no association, Lift > 1 --> positive association, Lift < 1 --> negative
     lift = num_ab / expected
 
+    # Fisher's test
     p_value = hypergeom.sf(num_ab-1, num_orders, num_a, num_b)
 
     results.append({
@@ -67,7 +68,7 @@ for (a,b), num_ab in pair_counts.items():
 
 pairs_df = pd.DataFrame(results)
 
-# correct for testing many pairs
+# correct for testing many pairs -- Benjamini-Hochberg
 if not pairs_df.empty:
     pairs_df["adjusted_p_value"] = multipletests(
         pairs_df["p_value"], method="fdr_bh"
@@ -90,4 +91,3 @@ significant_pairs = (
 )
 
 print(significant_pairs)
-
