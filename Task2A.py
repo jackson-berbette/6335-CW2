@@ -6,7 +6,7 @@ from scipy.stats import nbinom
 from IPython.display import display
 
 
-with contextlib.redirect_stdout(io.StringIO()):
+with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
     import Task1A as t1
 
 supplier_df = pd.read_csv("Data/QF_Facility_Supplier_Sequence.csv")
@@ -264,3 +264,8 @@ pd.set_option("display.max_colwidth", None)
 display(supply_aware_targets_df.head(10))
 display(supply_target_failures_df.head(10))
 
+
+# store output
+supply_aware_targets_df.to_csv(
+    "Output/task2a_inventory_autonomy_results.csv", index=False
+)
