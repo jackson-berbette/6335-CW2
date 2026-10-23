@@ -57,12 +57,6 @@ def simulate_effective_horizon(
     n_simulations=10000,
     random_state=42
 ):
-    """
-    Simulate time from the original order's expected delivery
-    until the final escalated portion arrives.
-
-    Returns the base horizon and simulated effective horizons.
-    """
     sequence = get_scenario_sequence(sku_id, scenario)
 
     if not sequence:
