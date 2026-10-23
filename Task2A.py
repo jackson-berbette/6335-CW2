@@ -15,14 +15,14 @@ supplier_df = pd.read_csv("Data/QF_Facility_Supplier_Sequence.csv")
 # Assumptions: conservative 4-day gap for twice-weekly, 30-day for monthly
 # Scenario/DC configuration. Intervals are calendar-day approximations.
 scenario_config = {
-    ("Fast", "Local"):    {"interval": 1,  "lead": 1},
-    ("Fast", "Regional"): {"interval": 4,  "lead": 2},
-    ("Fast", "National"): {"interval": 7,  "lead": 4},
-    ("Medium", "Local"):    {"interval": 4,  "lead": 2},
-    ("Medium", "Regional"): {"interval": 7,  "lead": 5},
-    ("Medium", "National"): {"interval": 14, "lead": 7},
-    ("Slow", "Regional"): {"interval": 14, "lead": 7},
-    ("Slow", "National"): {"interval": 30, "lead": 7},
+    ("Fast", "Local"):    {"interval": 1,  "lead": 2},
+    ("Fast", "Regional"): {"interval": 4,  "lead": 3},
+    ("Fast", "National"): {"interval": 7,  "lead": 5},
+    ("Medium", "Local"):    {"interval": 4,  "lead": 3},
+    ("Medium", "Regional"): {"interval": 7,  "lead": 6},
+    ("Medium", "National"): {"interval": 14, "lead": 8},
+    ("Slow", "Regional"): {"interval": 14, "lead": 8},
+    ("Slow", "National"): {"interval": 30, "lead": 8},
 }
 
 
