@@ -76,7 +76,7 @@ for sku_id, sku_data in daily_demand.groupby("sku_id"):
         model = smf.negativebinomial(
             formula="demand ~ time + C(day_of_week)",
             data=df
-        ).fit(disp=0, maxiter=200)
+        ).fit(disp=0, maxiter=500)
 
         # Estimated daily mean
         df["mean_estimate"] = model.predict(df)
@@ -107,7 +107,17 @@ for sku_id, sku_data in daily_demand.groupby("sku_id"):
         final_predictions.append(df)
 
     except Exception as e:
-        final_failed_skus[sku_id] = str(e)
+        print(f"{sku_id}: NB failed ({e}), using Poisson")
+
+        model = smf.poisson(
+            formula="demand ~ time + C(day_of_week)",
+            data=df
+        ).fit(disp=0, maxiter=500)
+
+        if not model.mle_retvals.get("converged", False):
+            raise ValueError(f"Poisson also failed for {sku_id}")
+
+        alpha = 0.0
 
 # Combine all product-day estimates
 if final_predictions:
@@ -146,3 +156,101 @@ for sku_id, model in final_models.items():
 model_parameters_df = pd.DataFrame(model_parameters)
 
 print(model_parameters_df)
+
+
+# -------- Export future daily demand distributions --------
+
+# Create requested forecast dates (inclusive)
+forecast_dates = pd.date_range(
+    start="2027-09-07",
+    end="2027-12-27",
+    freq="D"
+)
+
+# Create every SKU-date combination
+forecast_index = pd.MultiIndex.from_product(
+    [all_skus, forecast_dates],
+    names=["sku_id", "date"]
+)
+
+forecast_df = forecast_index.to_frame(index=False)
+
+# Match the day-of-week encoding used in Task 1
+# Historical encoding: 0 = Monday, ..., 6 = Sunday
+forecast_df["day_of_week"] = forecast_df["date"].dt.dayofweek
+
+# IMPORTANT:
+# Historical day 1 must correspond to a known calendar date.
+# Replace this with the actual date of historical day 1.
+historical_start_date = pd.Timestamp("2026-01-01")
+
+# Reconstruct the same time variable used in Task 1
+forecast_df["day"] = (
+    forecast_df["date"] - historical_start_date
+).dt.days + 1
+
+forecast_df["time"] = (forecast_df["day"] - 183) / 365
+
+# Predict each SKU's future demand distribution
+forecast_results = []
+
+for sku_id, sku_forecast in forecast_df.groupby("sku_id"):
+
+    df = sku_forecast.copy()
+    model = final_models.get(sku_id)
+
+    if sku_id not in final_models:
+        raise ValueError(f"No fitted model for {sku_id}")
+
+    if model is None:
+        # SKU had zero historical demand
+        df["mean_units"] = 0.0
+        df["sd_units"] = 0.0
+
+    else:
+        # Predicted daily mean
+        df["mean_units"] = model.predict(df)
+
+        # Negative Binomial dispersion
+        alpha = float(model.params["alpha"])
+
+        # Predicted daily standard deviation
+        df["sd_units"] = np.sqrt(
+            df["mean_units"] +
+            alpha * df["mean_units"]**2
+        )
+
+    forecast_results.append(
+        df[["sku_id", "date", "mean_units", "sd_units"]]
+    )
+
+# Combine results
+demand_forecast = pd.concat(
+    forecast_results,
+    ignore_index=True
+)
+
+# Format date for CSV
+demand_forecast["date"] = (
+    demand_forecast["date"].dt.strftime("%Y-%m-%d")
+)
+
+# Validate output
+expected_rows = len(all_skus) * len(forecast_dates)
+
+assert len(all_skus) == 2000
+assert len(demand_forecast) == expected_rows
+assert not demand_forecast.isna().any().any()
+assert (demand_forecast[["mean_units", "sd_units"]] >= 0).all().all()
+
+# Save CSV
+demand_forecast.to_csv(
+    "Output/Task1_QF_Daily_Demand_Forecast.csv",
+    index=False
+)
+
+print("Total rows:", len(demand_forecast))
+print("Unique SKUs:", demand_forecast["sku_id"].nunique())
+print("Unique dates:", demand_forecast["date"].nunique())
+
+display(demand_forecast.head(10))

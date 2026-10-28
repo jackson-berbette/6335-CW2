@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import contextlib
 import io
+import os
 from scipy.stats import nbinom
 from IPython.display import display
 
@@ -269,3 +270,70 @@ display(supply_target_failures_df.head(10))
 supply_aware_targets_df.to_csv(
     "Output/task2a_inventory_autonomy_results.csv", index=False
 )
+
+# generate 9 csvs for evaluator
+scenarios = ["Fast", "Medium", "Slow"]
+robustness_levels = [50, 90, 99]
+
+policy_id = 1
+
+for scenario in scenarios:
+
+    scenario_df = supply_aware_targets_df[
+        supply_aware_targets_df["scenario"] == scenario
+    ]
+
+    for robustness in robustness_levels:
+
+        service_target = robustness / 100
+
+        output_df = scenario_df[
+            ["sku_id", f"stock_{robustness}"]
+        ].copy()
+
+        # Add required metadata
+        output_df["policy_id"] = f"POLICY_{policy_id:02d}"
+        output_df["scenario_id"] = scenario.upper()
+        output_df["service_target"] = service_target
+
+        # Effective day: first day the policy applies
+        output_df["effective_day"] = "2027-09-07"
+
+        # Rename inventory target column
+        output_df = output_df.rename(columns={
+            f"stock_{robustness}": "target_stock_units"
+        })
+
+        # Arrange columns in required order
+        output_df = output_df[
+            [
+                "policy_id",
+                "scenario_id",
+                "service_target",
+                "sku_id",
+                "effective_day",
+                "target_stock_units"
+            ]
+        ]
+
+        output_df = output_df.sort_values("sku_id")
+
+        # Validate before saving
+        assert len(output_df) == 2000, (
+            f"Expected 2000 SKUs for {scenario} {robustness}%"
+        )
+        assert output_df["sku_id"].nunique() == 2000
+        assert not output_df["target_stock_units"].isna().any()
+
+        # Export
+        filename = (
+            f"task2_{scenario.lower()}_{robustness}.csv"
+        )
+
+        filepath = os.path.join("Output", filename)
+
+        output_df.to_csv(filepath, index=False)
+
+        print(f"Saved {filepath}: {len(output_df)} rows")
+
+        policy_id += 1
