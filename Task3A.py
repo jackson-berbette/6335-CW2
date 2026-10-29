@@ -204,3 +204,43 @@ fig.suptitle("How each selected policy places stock in one temperature zone (sch
 plt.tight_layout(rect=(0, 0.04, 1, 0.97))
 plt.savefig("Output/T3a_fig_policy_schematics.png", dpi=170)
 plt.show()
+
+# figure 3: pick concentration by temperature zone (share of order lines against share of products)
+fig, ax = plt.subplots(figsize=(7, 4.2))
+zone_color = {"Ambient": "#8b7d6b", "Chilled": "#3b82f6", "Frozen": "#6d28d9"}
+
+for zone in zones:
+    zone_skus = sku_df.loc[sku_df["temperature_zone"] == zone, "sku_id"]
+    zone_lines = lines_per_sku[lines_per_sku.index.isin(zone_skus)].sort_values(ascending=False)
+    share_products = np.arange(1, len(zone_lines) + 1) / len(zone_lines) * 100
+    share_lines = zone_lines.cumsum().values / zone_lines.sum() * 100
+    ax.plot(share_products, share_lines, color=zone_color[zone], lw=2,
+            label=f"{zone} ({len(zone_lines):,} products)")
+
+ax.axvline(20, color="grey", lw=0.8, ls="--")
+ax.axhline(80, color="grey", lw=0.8, ls="--")
+ax.set_xlabel("Share of products, most-picked first (%)")
+ax.set_ylabel("Share of order lines (%)")
+ax.set_title("Pick concentration by temperature zone", loc="left", fontsize=10)
+ax.set_xlim(0, 100)
+ax.set_ylim(0, 101)
+ax.legend(loc="lower right", frameon=False)
+
+plt.tight_layout()
+plt.savefig("Output/T3a_fig_pick_concentration.png", dpi=170)
+plt.show()
+
+# velocity classes per zone used by the Class policies: A = 80% of lines, B = next 15%, C = last 5%
+class_rows = []
+
+for zone in zones:
+    zone_skus = sku_df.loc[sku_df["temperature_zone"] == zone, "sku_id"]
+    zone_lines = lines_per_sku[lines_per_sku.index.isin(zone_skus)].sort_values(ascending=False)
+    zone_cum = zone_lines.cumsum() / zone_lines.sum()
+    zone_class = np.where(zone_cum <= 0.80, "A", np.where(zone_cum <= 0.95, "B", "C"))
+    class_rows.append({"zone": zone,
+                       "A_products": int((zone_class == "A").sum()),
+                       "B_products": int((zone_class == "B").sum()),
+                       "C_products": int((zone_class == "C").sum())})
+    
+print(pd.DataFrame(class_rows))
