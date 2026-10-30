@@ -1,6 +1,8 @@
 import os
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
 # read relevant input files
 sku_df = pd.read_csv("Data/QF_Facility_SKU_Master.csv")
@@ -190,3 +192,61 @@ for family in ["dedicated", "class", "shared"]:
 
 slots_df.to_csv("Output/T3_slot_estimates_" + headroom_rule + ".csv", index=False)
 pd.DataFrame(daily_rows).to_csv("Output/T3_daily_slots_in_use_" + headroom_rule + ".csv", index=False)
+
+# -------- Checks and figures for the report --------
+# worked example: from target stock to slots for two products, Fast / 90%
+example_df = sku_df.merge(
+    targets_df[targets_df["scenario"] == "Fast"][["sku_id", "stock_90"]], on="sku_id"
+)
+example_df["house_units"] = stock_to_house(example_df["stock_90"], example_df["case_pack_units"])
+example_df["house_litres"] = example_df["house_units"] * example_df["unit_storage_l"]
+example_df["slots"] = np.maximum(1, np.ceil(example_df["house_litres"] / example_df["slot_volume_l"]))
+
+print(example_df[example_df["sku_id"].isin(["P0001", "P1500"])][
+    ["sku_id", "temperature_zone", "stock_90", "case_pack_units", "house_units",
+     "case_volume_l", "unit_storage_l", "house_litres", "slot_volume_l", "slots"]
+].round(3).to_string(index=False))
+ 
+print("Products needing more than one slot at Fast / 90%:", int((example_df["slots"] > 1).sum()),
+      "| most slots for one product:", int(example_df["slots"].max()))
+
+# headroom comparison: run this script once with headroom_rule = "overshoot" to create the second file
+if os.path.exists("Output/T3_slot_estimates_overshoot.csv"):
+    for rule in ["roundup", "overshoot"]:
+        rule_df = pd.read_csv("Output/T3_slot_estimates_" + rule + ".csv")
+        print("Headroom rule:", rule, "(90% target)")
+        print(rule_df[rule_df["robustness"] == 90].groupby("scenario", sort=False)
+              [["dedicated_slots", "dedicated_modules", "shared_slots", "shared_modules"]].sum())
+
+
+# figure: slots in use over the 16-week planning horizon against each policy family's estimate (90% target)
+daily_df = pd.DataFrame(daily_rows)
+daily_df["date"] = pd.to_datetime(daily_df["date"])
+colors = {"Fast": "tab:blue", "Medium": "tab:orange", "Slow": "tab:green"}
+
+fig, axes = plt.subplots(1, 3, figsize=(13, 4), sharey=True)
+
+for ax, scenario in zip(axes, scenarios):
+    in_use = daily_df[(daily_df["scenario"] == scenario) & (daily_df["robustness"] == 90)].groupby("date")["slots_in_use"].sum()
+    estimates = slots_df[(slots_df["scenario"] == scenario) & (slots_df["robustness"] == 90)]
+
+    ax.plot(in_use.index, in_use.values, color=colors[scenario], lw=1.6, label="Slots in use (shared stock)")
+    ax.axhline(estimates["dedicated_slots"].sum(), color="black", ls="-", lw=1, label="Dedicated estimate (policies 1-3)")
+    ax.axhline(estimates["class_slots"].sum(), color="black", ls="--", lw=1, label="Class estimate (4-6)")
+    ax.axhline(estimates["shared_slots"].sum(), color="black", ls=":", lw=1, label="Shared estimate (7-9)")
+
+    ax.set_title(scenario + " replenishment, 90% target", loc="left", fontsize=10)
+    ax.set_ylim(1800, 3400)
+    ax.grid(axis="y", color="#e5e7eb")
+    ax.xaxis.set_major_locator(mdates.MonthLocator())
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%b"))
+
+axes[0].set_ylabel("Storage slots (all zones)")
+handles, labels = axes[0].get_legend_handles_labels()
+fig.legend(handles, labels, loc="lower center", ncol=4, frameon=False)
+fig.suptitle("Slots in use over the 16-week planning horizon against each policy family's estimate",
+             x=0.01, ha="left", fontsize=11, weight="bold")
+
+plt.tight_layout(rect=(0, 0.07, 1, 0.95))
+plt.savefig("Output/T3b_fig_slots_horizon.png", dpi=170)
+plt.show()
