@@ -1,0 +1,10 @@
+policy_no,policy,Fast,Medium,Slow
+1,Dedicated · COL,67.2,70.7,
+2,Dedicated · Random,108.9,111.7,
+3,Dedicated · Target,67.2,70.7,
+4,Class · COL,71.2,75.0,
+5,Class · Random,71.2,75.0,
+6,Class · Target,71.2,75.0,
+7,Shared · COL,67.2,67.2,
+8,Shared · Target,67.2,67.2,
+9,DoS · Shared · Target,67.2,67.2,

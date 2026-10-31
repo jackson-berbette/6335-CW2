@@ -1,0 +1,34 @@
+alternative,scenario,robustness,policy_no,policy,travel_ft_per_line
+POLICY_01,Fast,50,1,Dedicated · COL,66.0
+POLICY_02,Fast,90,1,Dedicated · COL,67.2
+POLICY_02,Fast,90,2,Dedicated · Random,108.9
+POLICY_02,Fast,90,3,Dedicated · Target,67.2
+POLICY_02,Fast,90,4,Class · COL,71.2
+POLICY_02,Fast,90,5,Class · Random,71.2
+POLICY_02,Fast,90,6,Class · Target,71.2
+POLICY_02,Fast,90,7,Shared · COL,67.2
+POLICY_02,Fast,90,8,Shared · Target,67.2
+POLICY_02,Fast,90,9,DoS · Shared · Target,67.2
+POLICY_03,Fast,99,1,Dedicated · COL,70.9
+POLICY_04,Medium,50,1,Dedicated · COL,69.6
+POLICY_05,Medium,90,1,Dedicated · COL,70.7
+POLICY_05,Medium,90,2,Dedicated · Random,111.7
+POLICY_05,Medium,90,3,Dedicated · Target,70.7
+POLICY_05,Medium,90,4,Class · COL,75.0
+POLICY_05,Medium,90,5,Class · Random,75.0
+POLICY_05,Medium,90,6,Class · Target,75.0
+POLICY_05,Medium,90,7,Shared · COL,67.2
+POLICY_05,Medium,90,8,Shared · Target,67.2
+POLICY_05,Medium,90,9,DoS · Shared · Target,67.2
+POLICY_06,Medium,99,1,Dedicated · COL,75.6
+POLICY_07,Slow,50,1,Dedicated · COL,79.3
+POLICY_08,Slow,90,1,Dedicated · COL,
+POLICY_08,Slow,90,2,Dedicated · Random,
+POLICY_08,Slow,90,3,Dedicated · Target,
+POLICY_08,Slow,90,4,Class · COL,
+POLICY_08,Slow,90,5,Class · Random,
+POLICY_08,Slow,90,6,Class · Target,
+POLICY_08,Slow,90,7,Shared · COL,
+POLICY_08,Slow,90,8,Shared · Target,
+POLICY_08,Slow,90,9,DoS · Shared · Target,
+POLICY_09,Slow,99,1,Dedicated · COL,
